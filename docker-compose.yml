@@ -1,0 +1,46 @@
+services:
+  backend:
+    build: ./backend
+    container_name: erp-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=erp_db
+      - DB_USER=erp_user
+      - DB_PASSWORD=erp_pass123
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2
+      - PORT=3000
+    depends_on:
+      - postgres
+      - ollama
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  ollama:
+    image: ollama/ollama
+    container_name: erp-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: erp-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=erp_db
+      - POSTGRES_USER=erp_user
+      - POSTGRES_PASSWORD=erp_pass123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+
+volumes:
+  ollama_data:
+  postgres_data:

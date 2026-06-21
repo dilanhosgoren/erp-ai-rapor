@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP AI Rapor Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a1d2e;
+            border-bottom: 1px solid #2d2f45;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .header .badge {
+            background: #3b82f6;
+            color: #fff;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: calc(100vh - 57px);
+        }
+
+        .sidebar {
+            background: #13151f;
+            border-right: 1px solid #2d2f45;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 16px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 13px;
+            color: #9ca3af;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: #1e2133;
+            color: #e0e0e0;
+        }
+
+        .sidebar-item.active {
+            background: #1e2133;
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+        }
+
+        .sidebar-item .icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-item .kod {
+            background: #2d2f45;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            color: #6b7280;
+            font-family: monospace;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #1a1d2e;
+            border-bottom: 1px solid #2d2f45;
+            padding: 0 16px;
+            gap: 4px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .tab:hover {
+            color: #e0e0e0;
+        }
+
+        .tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .rapor-panel {
+            display: none;
+        }
+
+        .rapor-panel.active {
+            display: block;
+        }
+
+        .rapor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .rapor-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge-kategori {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-ai {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .btn-ai:hover {
+            background: #6d28d9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #9ca3af;
+            border: 1px solid #2d2f45;
+        }
+
+        .btn-outline:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tablo-wrapper {
+            background: #1a1d2e;
+            border: 1px solid #2d2f45;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .tablo-info {
+            padding: 12px 16px;
+            border-bottom: 1px solid #2d2f45;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #13151f;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #2d2f45;
+        }
+
+        td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid #1e2133;
+            color: #d1d5db;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #1e2133;
+        }
+
+        .ai-box {
+            background: #1a1d2e;
+            border: 1px solid #4c1d95;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .ai-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+
+        .ai-box-content {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #d1d5db;
+            white-space: pre-wrap;
+        }
+
+        .yukleniyor {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 40px;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2d2f45;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sohbet */
+        .sohbet-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 16px;
+        }
+
+        .sohbet-mesajlar {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 200px;
+            max-height: 380px;
+        }
+
+        .mesaj {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mesaj.kullanici {
+            flex-direction: row-reverse;
+        }
+
+        .mesaj-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .mesaj.ai .mesaj-avatar {
+            background: #4c1d95;
+        }
+
+        .mesaj.kullanici .mesaj-avatar {
+            background: #1e3a5f;
+        }
+
+        .mesaj-balon {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .mesaj.ai .mesaj-balon {
+            background: #1a1d2e;
+            border: 1px solid #2d2f45;
+            color: #d1d5db;
+            border-radius: 4px 12px 12px 12px;
+        }
+
+        .mesaj.kullanici .mesaj-balon {
+            background: #1e3a5f;
+            color: #e0e0e0;
+            border-radius: 12px 4px 12px 12px;
+        }
+
+        .sohbet-input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sohbet-input {
+            flex: 1;
+            background: #1a1d2e;
+            border: 1px solid #2d2f45;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            height: 52px;
+            font-family: inherit;
+        }
+
+        .sohbet-input:focus {
+            border-color: #3b82f6;
+        }
+
+        .sohbet-input::placeholder {
+            color: #4b5563;
+        }
+
+        /* Hızlı sorular */
+        .hizli-sorular {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .hizli-soru {
+            background: #1a1d2e;
+            border: 1px solid #2d2f45;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .hizli-soru:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Dashboard kartları */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .dashboard-kart {
+            background: #1a1d2e;
+            border: 1px solid #2d2f45;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .dashboard-kart-baslik {
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-kart-deger {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .dashboard-kart-alt {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .dashboard-kart.mavi {
+            border-left: 3px solid #3b82f6;
+        }
+
+        .dashboard-kart.yesil {
+            border-left: 3px solid #22c55e;
+        }
+
+        .dashboard-kart.mor {
+            border-left: 3px solid #a78bfa;
+        }
+
+        .dashboard-kart.turuncu {
+            border-left: 3px solid #f59e0b;
+        }
+
+        /* Rapor öneri kartları */
+        .oneri-kartlar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .oneri-kart {
+            background: #1e2133;
+            border: 1px solid #2d2f45;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .oneri-kart:hover {
+            background: #252840;
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        /* Mini bar grafik */
+        .mini-bar-wrapper {
+            margin-top: 10px;
+        }
+
+        .mini-bar-satir {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .mini-bar-etiket {
+            font-size: 12px;
+            color: #9ca3af;
+            width: 70px;
+            flex-shrink: 0;
+        }
+
+        .mini-bar-track {
+            flex: 1;
+            height: 8px;
+            background: #2d2f45;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .mini-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: #3b82f6;
+            transition: width 0.6s ease;
+        }
+
+        .mini-bar-deger {
+            font-size: 11px;
+            color: #6b7280;
+            width: 70px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .durum-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 24px;
+            background: #13151f;
+            border-top: 1px solid #2d2f45;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .durum-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .durum-dot.pasif {
+            background: #ef4444;
+        }
+
+        .bos-durum {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4b5563;
+        }
+
+        .bos-durum .ikon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .bos-durum p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <span style="font-size:22px">📊</span>
+        <h1>ERP AI Rapor Sistemi</h1>
+        <span class="badge">v2.0.0</span>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Sabit Raporlar</div>
+                <div class="sidebar-item" onclick="raporAc('R001','Aylık Satış Özeti','Satış')" id="item-R001">
+                    <span class="icon">📅</span> Aylık Satış Özeti <span class="kod">R001</span>
+                </div>
+                <div class="sidebar-item" onclick="raporAc('R002','En Çok Satan Ürünler','Satış')" id="item-R002">
+                    <span class="icon">🏆</span> En Çok Satan Ürünler <span class="kod">R002</span>
+                </div>
+                <div class="sidebar-item" onclick="raporAc('R003','Şehre Göre Satışlar','Satış')" id="item-R003">
+                    <span class="icon">🗺️</span> Şehre Göre Satışlar <span class="kod">R003</span>
+                </div>
+                <div class="sidebar-item" onclick="raporAc('R004','Tüm Satış Listesi','Satış')" id="item-R004">
+                    <span class="icon">📋</span> Tüm Satış Listesi <span class="kod">R004</span>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Müşteri</div>
+                <div class="sidebar-item" onclick="raporAc('R021','Müşteri Listesi','Müşteri')" id="item-R021">
+                    <span class="icon">👥</span> Müşteri Listesi <span class="kod">R021</span>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Ürün & Stok</div>
+                <div class="sidebar-item" onclick="raporAc('R041','Ürün Listesi','Ürün')" id="item-R041">
+                    <span class="icon">📦</span> Ürün Listesi <span class="kod">R041</span>
+                </div>
+                <div class="sidebar-item" onclick="raporAc('R042','Düşük Stok Raporu','Ürün')" id="item-R042">
+                    <span class="icon">⚠️</span> Düşük Stok Raporu <span class="kod">R042</span>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Personel & İK</div>
+                <div class="sidebar-item" onclick="raporAc('R061','Personel Listesi','Personel')" id="item-R061">
+                    <span class="icon">👤</span> Personel Listesi <span class="kod">R061</span>
+                </div>
+                <div class="sidebar-item" onclick="raporAc('R062','Departman Maaş Özeti','Personel')" id="item-R062">
+                    <span class="icon">💰</span> Departman Maaş Özeti <span class="kod">R062</span>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">ERP Fonksiyonları</div>
+                <div class="sidebar-item" onclick="erpAc('F001','Satış Analizi','Analiz')" id="item-F001">
+                    <span class="icon">📈</span> Satış Analizi <span class="kod">F001</span>
+                </div>
+                <div class="sidebar-item" onclick="erpAc('F002','Stok Kontrolü','Stok')" id="item-F002">
+                    <span class="icon">🔍</span> Stok Kontrolü <span class="kod">F002</span>
+                </div>
+                <div class="sidebar-item" onclick="erpAc('F003','Müşteri Analizi','Müşteri')" id="item-F003">
+                    <span class="icon">🎯</span> Müşteri Analizi <span class="kod">F003</span>
+                </div>
+                <div class="sidebar-item" onclick="erpAc('F004','Personel Raporu','İK')" id="item-F004">
+                    <span class="icon">👥</span> Personel Raporu <span class="kod">F004</span>
+                </div>
+                <div class="sidebar-item" onclick="erpAc('F005','Ürün Kataloğu','Ürün')" id="item-F005">
+                    <span class="icon">📦</span> Ürün Kataloğu <span class="kod">F005</span>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">AI Asistan</div>
+                <div class="sidebar-item" onclick="tabGec('ai')" id="item-ai">
+                    <span class="icon">🤖</span> AI ile Sohbet
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="tabs">
+                <div class="tab active" id="tab-rapor" onclick="tabGec('rapor')">📊 Rapor</div>
+                <div class="tab" id="tab-ai" onclick="tabGec('ai')">🤖 AI Asistan</div>
+            </div>
+
+            <div class="content">
+
+                <!-- Rapor paneli -->
+                <div class="rapor-panel active" id="panel-rapor">
+                    <div class="bos-durum" id="bos-durum">
+                        <div class="ikon">👈</div>
+                        <p>Sol menüden bir rapor seçin</p>
+                    </div>
+                    <div id="rapor-icerik" style="display:none">
+                        <div class="rapor-header">
+                            <div>
+                                <h2 id="rapor-baslik">-</h2>
+                                <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+                                    <span class="badge-kategori" id="rapor-kategori">-</span>
+                                    <span style="font-size:12px;color:#6b7280" id="rapor-kod">-</span>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <button class="btn btn-outline" onclick="yenile()">🔄 Yenile</button>
+                                <button class="btn btn-ai" id="btn-ai-analiz" onclick="aiAnaliz()">🤖 AI Analiz
+                                    Et</button>
+                            </div>
+                        </div>
+                        <div id="tablo-alani"></div>
+                        <div id="ai-analiz-alani"></div>
+                    </div>
+                </div>
+
+                <!-- AI Asistan paneli -->
+                <div class="rapor-panel" id="panel-ai">
+                    <div class="rapor-header">
+                        <h2>🤖 AI Asistan</h2>
+                        <button class="btn btn-outline" onclick="sohbetTemizle()">🗑️ Temizle</button>
+                    </div>
+
+                    <!-- Hızlı sorular -->
+                    <div class="hizli-sorular">
+                        <div class="hizli-soru" onclick="hizliSor('En çok hangi şehirde satış yapıyoruz?')">🗺️ En çok
+                            satış yapılan şehir</div>
+                        <div class="hizli-soru" onclick="hizliSor('En çok satan ürünler hangileri?')">🏆 En çok satan
+                            ürünler</div>
+                        <div class="hizli-soru" onclick="hizliSor('Toplam ciromuz ne kadar?')">💰 Toplam ciro</div>
+                        <div class="hizli-soru" onclick="hizliSor('Stokta kritik seviyede ürün var mı?')">⚠️ Kritik stok
+                        </div>
+                        <div class="hizli-soru" onclick="hizliSor('Hangi departmanda kaç personel var?')">👥 Personel
+                            dağılımı</div>
+                    </div>
+
+                    <div class="sohbet-wrapper">
+                        <div class="sohbet-mesajlar" id="sohbet-mesajlar">
+                            <div class="mesaj ai">
+                                <div class="mesaj-avatar">🤖</div>
+                                <div class="mesaj-balon">Merhaba! Ben ERP AI Asistanınızım. Soru sorabilir ya da
+                                    yukarıdaki hızlı sorulardan birini seçebilirsiniz. İstersen "satış grafiğini göster"
+                                    dersen otomatik rapor açarım! 📊</div>
+                            </div>
+                        </div>
+                        <div id="dashboard-alani"></div>
+                        <div class="sohbet-input-area">
+                            <textarea class="sohbet-input" id="sohbet-input"
+                                placeholder="Sorunuzu yazın... (Enter ile gönder)"
+                                onkeydown="enterGonder(event)"></textarea>
+                            <button class="btn btn-primary" id="btn-gonder" onclick="soruGonder()">➤ Gönder</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="durum-bar">
+                <span><span class="durum-dot" id="dot-backend"></span> Backend</span>
+                <span><span class="durum-dot pasif" id="dot-ollama"></span> Ollama</span>
+                <span><span class="durum-dot pasif" id="dot-db"></span> Veritabanı</span>
+                <span id="durum-zaman" style="margin-left:auto"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000'
+        let aktifKod = null
+        let aktifTip = null
+
+        // ── Tab geçişi ──
+        function tabGec(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+            document.querySelectorAll('.rapor-panel').forEach(p => p.classList.remove('active'))
+            document.getElementById('tab-' + tab).classList.add('active')
+            document.getElementById('panel-' + tab).classList.add('active')
+            if (tab === 'ai') document.getElementById('sohbet-input').focus()
+        }
+
+        function setAktifItem(id) {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+            const el = document.getElementById('item-' + id)
+            if (el) el.classList.add('active')
+        }
+
+        // ── Rapor aç ──
+        async function raporAc(kod, ad, kategori) {
+            tabGec('rapor')
+            setAktifItem(kod)
+            aktifKod = kod; aktifTip = 'rapor'
+            document.getElementById('bos-durum').style.display = 'none'
+            document.getElementById('rapor-icerik').style.display = 'block'
+            document.getElementById('rapor-baslik').textContent = ad
+            document.getElementById('rapor-kategori').textContent = kategori
+            document.getElementById('rapor-kod').textContent = kod
+            document.getElementById('ai-analiz-alani').innerHTML = ''
+            await veriYukle(`${API}/api/raporlar/${kod}`)
+        }
+
+        async function erpAc(kod, ad, kategori) {
+            tabGec('rapor')
+            setAktifItem(kod)
+            aktifKod = kod; aktifTip = 'erp'
+            document.getElementById('bos-durum').style.display = 'none'
+            document.getElementById('rapor-icerik').style.display = 'block'
+            document.getElementById('rapor-baslik').textContent = ad
+            document.getElementById('rapor-kategori').textContent = kategori
+            document.getElementById('rapor-kod').textContent = kod
+            document.getElementById('ai-analiz-alani').innerHTML = ''
+            await veriYukle(`${API}/api/raporlar/erp/${kod}`)
+        }
+
+        async function veriYukle(url) {
+            const alan = document.getElementById('tablo-alani')
+            alan.innerHTML = '<div class="yukleniyor"><div class="spinner"></div> Yükleniyor...</div>'
+            try {
+                const res = await fetch(url)
+                const data = await res.json()
+                if (!data.basarili) throw new Error(data.hata)
+                alan.innerHTML = tabloyaOlustur(data.veri, data.kayitSayisi)
+            } catch (e) {
+                alan.innerHTML = `<div style="color:#ef4444;padding:20px">Hata: ${e.message}</div>`
+            }
+        }
+
+        function tabloyaOlustur(veri, sayi) {
+            if (!veri || veri.length === 0) return '<div class="bos-durum"><p>Veri bulunamadı</p></div>'
+            const kolonlar = Object.keys(veri[0])
+            const basliklar = kolonlar.map(k => `<th>${k.replace(/_/g, ' ')}</th>`).join('')
+            const satirlar = veri.map(satir =>
+                `<tr>${kolonlar.map(k => `<td>${satir[k] ?? '-'}</td>`).join('')}</tr>`
+            ).join('')
+            return `
+    <div class="tablo-wrapper">
+      <div class="tablo-info">${sayi} kayıt bulundu</div>
+      <div style="overflow-x:auto">
+        <table><thead><tr>${basliklar}</tr></thead><tbody>${satirlar}</tbody></table>
+      </div>
+    </div>`
+        }
+
+        async function aiAnaliz() {
+            if (!aktifKod) return
+            const btn = document.getElementById('btn-ai-analiz')
+            btn.disabled = true; btn.textContent = '⏳ Analiz ediliyor...'
+            const alan = document.getElementById('ai-analiz-alani')
+            alan.innerHTML = '<div class="yukleniyor"><div class="spinner"></div> AI analiz yapıyor...</div>'
+            try {
+                const url = aktifTip === 'erp'
+                    ? `${API}/api/raporlar/erp/${aktifKod}?ai=true`
+                    : `${API}/api/raporlar/${aktifKod}?ai=true`
+                const res = await fetch(url)
+                const data = await res.json()
+                alan.innerHTML = `
+      <div class="ai-box">
+        <div class="ai-box-header">🤖 AI Analizi — llama3.2</div>
+        <div class="ai-box-content">${data.aiAnaliz || 'Analiz alınamadı'}</div>
+      </div>`
+            } catch (e) {
+                alan.innerHTML = `<div style="color:#ef4444;padding:20px">Hata: ${e.message}</div>`
+            }
+            btn.disabled = false; btn.textContent = '🤖 AI Analiz Et'
+        }
+
+        function yenile() {
+            if (!aktifKod) return
+            aktifTip === 'erp'
+                ? erpAc(aktifKod, document.getElementById('rapor-baslik').textContent, document.getElementById('rapor-kategori').textContent)
+                : raporAc(aktifKod, document.getElementById('rapor-baslik').textContent, document.getElementById('rapor-kategori').textContent)
+        }
+
+        // ── AI Sohbet ──
+        function hizliSor(soru) {
+            document.getElementById('sohbet-input').value = soru
+            soruGonder()
+        }
+
+        // Chat'ten dashboard açma — anahtar kelime eşleştirme
+        const KOMUTLAR = [
+            { kelimeler: ['aylık satış', 'satış özeti', 'aylık ciro'], aksiyon: () => { tabGec('rapor'); raporAc('R001', 'Aylık Satış Özeti', 'Satış') }, etiket: '📅 Aylık Satış Özeti', kod: 'R001' },
+            { kelimeler: ['en çok satan', 'çok satan ürün', 'popüler ürün'], aksiyon: () => { tabGec('rapor'); raporAc('R002', 'En Çok Satan Ürünler', 'Satış') }, etiket: '🏆 En Çok Satan Ürünler', kod: 'R002' },
+            { kelimeler: ['şehre göre', 'şehir bazlı', 'hangi şehir'], aksiyon: () => { tabGec('rapor'); raporAc('R003', 'Şehre Göre Satışlar', 'Satış') }, etiket: '🗺️ Şehre Göre Satışlar', kod: 'R003' },
+            { kelimeler: ['müşteri listesi', 'müşteriler', 'müşteri'], aksiyon: () => { tabGec('rapor'); raporAc('R021', 'Müşteri Listesi', 'Müşteri') }, etiket: '👥 Müşteri Listesi', kod: 'R021' },
+            { kelimeler: ['stok', 'düşük stok', 'kritik stok'], aksiyon: () => { tabGec('rapor'); raporAc('R042', 'Düşük Stok Raporu', 'Ürün') }, etiket: '⚠️ Düşük Stok Raporu', kod: 'R042' },
+            { kelimeler: ['personel', 'çalışan', 'personel listesi'], aksiyon: () => { tabGec('rapor'); raporAc('R061', 'Personel Listesi', 'Personel') }, etiket: '👤 Personel Listesi', kod: 'R061' },
+            { kelimeler: ['maaş', 'departman maaş', 'maaş özeti'], aksiyon: () => { tabGec('rapor'); raporAc('R062', 'Departman Maaş Özeti', 'Personel') }, etiket: '💰 Departman Maaş Özeti', kod: 'R062' },
+            { kelimeler: ['ürün listesi', 'ürünler', 'ürün kataloğu'], aksiyon: () => { tabGec('rapor'); raporAc('R041', 'Ürün Listesi', 'Ürün') }, etiket: '📦 Ürün Listesi', kod: 'R041' },
+            { kelimeler: ['tüm satış', 'satış listesi'], aksiyon: () => { tabGec('rapor'); raporAc('R004', 'Tüm Satış Listesi', 'Satış') }, etiket: '📋 Tüm Satış Listesi', kod: 'R004' },
+        ]
+
+        function komutBul(metin) {
+            const kucuk = metin.toLowerCase()
+            return KOMUTLAR.find(k => k.kelimeler.some(w => kucuk.includes(w)))
+        }
+
+        async function soruGonder() {
+            const input = document.getElementById('sohbet-input')
+            const soru = input.value.trim()
+            if (!soru) return
+            input.value = ''
+            const btn = document.getElementById('btn-gonder')
+            btn.disabled = true
+
+            mesajEkle('kullanici', soru)
+
+            // Dashboard alanını temizle
+            document.getElementById('dashboard-alani').innerHTML = ''
+
+            // Komut kontrolü — rapor aç
+            const komut = komutBul(soru)
+            if (komut) {
+                mesajEkle('ai', `Tabii! "${komut.etiket}" raporunu açıyorum... 📊`)
+                setTimeout(() => {
+                    komut.aksiyon()
+                    oneriEkle(komut.kod)
+                }, 600)
+                btn.disabled = false
+                return
+            }
+
+            // Dashboard komutları
+            if (soru.toLowerCase().includes('dashboard') || soru.toLowerCase().includes('özet') || soru.toLowerCase().includes('genel durum')) {
+                mesajEkle('ai', 'Genel durum dashboard\'u hazırlanıyor...')
+                await dashboardGoster()
+                btn.disabled = false
+                return
+            }
+
+            // Normal AI sorusu
+            mesajEkle('ai', '<div class="yukleniyor" style="padding:0"><div class="spinner"></div> Düşünüyor...</div>')
+
+            try {
+                const res = await fetch(`${API}/api/ai/sor`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ soru })
+                })
+                const data = await res.json()
+                const cevap = data.cevap || 'Cevap alınamadı'
+                sonMesajGuncelle(cevap)
+
+                // Cevap içinde rapor önerisi var mı?
+                const ilgiliKomut = KOMUTLAR.find(k => k.kelimeler.some(w => cevap.toLowerCase().includes(w.split(' ')[0])))
+                if (ilgiliKomut) {
+                    setTimeout(() => oneriEkle(ilgiliKomut.kod), 300)
+                }
+
+            } catch (e) {
+                sonMesajGuncelle('Bağlantı hatası: ' + e.message)
+            }
+            btn.disabled = false
+        }
+
+        // İlgili raporu öneri olarak göster
+        function oneriEkle(kod) {
+            const rapor = KOMUTLAR.find(k => k.kod === kod)
+            if (!rapor) return
+            const alan = document.getElementById('dashboard-alani')
+            alan.innerHTML = `
+    <div class="oneri-kartlar">
+      <div class="oneri-kart" onclick="${rapor.aksiyon.toString().includes('raporAc') ? `raporAc('${kod}','${rapor.etiket.replace(/[^\w\s]/gi, '')}','')` : `erpAc('${kod}','${rapor.etiket.replace(/[^\w\s]/gi, '')}','')`}">
+        ${rapor.etiket} — Raporu Aç →
+      </div>
+    </div>`
+        }
+
+        // Dashboard göster
+        async function dashboardGoster() {
+            try {
+                const [satisRes, urunRes, personelRes] = await Promise.all([
+                    fetch(`${API}/api/raporlar/R001`),
+                    fetch(`${API}/api/raporlar/R002`),
+                    fetch(`${API}/api/raporlar/R061`)
+                ])
+                const satis = await satisRes.json()
+                const urun = await urunRes.json()
+                const personel = await personelRes.json()
+
+                const toplamCiro = satis.veri?.reduce((t, r) => t + parseFloat(r.toplam_ciro || 0), 0) || 0
+                const toplamSatis = satis.veri?.reduce((t, r) => t + parseInt(r.satis_adedi || 0), 0) || 0
+                const personelSayisi = personel.veri?.length || 0
+                const enCokSatan = urun.veri?.[0]?.urun_adi || '-'
+
+                const alan = document.getElementById('dashboard-alani')
+                alan.innerHTML = `
+      <div class="dashboard-grid">
+        <div class="dashboard-kart mavi">
+          <div class="dashboard-kart-baslik">Toplam Ciro</div>
+          <div class="dashboard-kart-deger">${toplamCiro.toLocaleString('tr-TR')} ₺</div>
+          <div class="dashboard-kart-alt">Tüm dönemler</div>
+        </div>
+        <div class="dashboard-kart yesil">
+          <div class="dashboard-kart-baslik">Toplam Satış</div>
+          <div class="dashboard-kart-deger">${toplamSatis} adet</div>
+          <div class="dashboard-kart-alt">İşlem sayısı</div>
+        </div>
+        <div class="dashboard-kart mor">
+          <div class="dashboard-kart-baslik">En Çok Satan</div>
+          <div class="dashboard-kart-deger" style="font-size:15px">${enCokSatan}</div>
+          <div class="dashboard-kart-alt">1. sıra ürün</div>
+        </div>
+        <div class="dashboard-kart turuncu">
+          <div class="dashboard-kart-baslik">Personel</div>
+          <div class="dashboard-kart-deger">${personelSayisi} kişi</div>
+          <div class="dashboard-kart-alt">Toplam çalışan</div>
+        </div>
+      </div>
+      ${sehirGrafigi(satis.veri)}`
+
+                sonMesajGuncelle('İşte genel durum özeti! Kartlara tıklayarak detaylara ulaşabilirsin. 👆')
+            } catch (e) {
+                sonMesajGuncelle('Dashboard yüklenemedi: ' + e.message)
+            }
+        }
+
+        function sehirGrafigi(veri) {
+            if (!veri || veri.length === 0) return ''
+            const maks = Math.max(...veri.map(r => parseFloat(r.toplam_ciro || 0)))
+            const satirlar = veri.slice(0, 5).map(r => {
+                const yuzde = Math.round((parseFloat(r.toplam_ciro) / maks) * 100)
+                return `
+      <div class="mini-bar-satir">
+        <div class="mini-bar-etiket">${r.ay || '-'}</div>
+        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${yuzde}%"></div></div>
+        <div class="mini-bar-deger">${parseFloat(r.toplam_ciro).toLocaleString('tr-TR')} ₺</div>
+      </div>`
+            }).join('')
+            return `<div class="mini-bar-wrapper" style="margin-top:12px;background:#1a1d2e;border:1px solid #2d2f45;border-radius:10px;padding:16px">
+    <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Aylık Ciro Trendi</div>
+    ${satirlar}
+  </div>`
+        }
+
+        function mesajEkle(tip, icerik) {
+            const alan = document.getElementById('sohbet-mesajlar')
+            const div = document.createElement('div')
+            div.className = `mesaj ${tip}`
+            div.innerHTML = `
+    <div class="mesaj-avatar">${tip === 'ai' ? '🤖' : '👤'}</div>
+    <div class="mesaj-balon">${icerik}</div>`
+            alan.appendChild(div)
+            alan.scrollTop = alan.scrollHeight
+        }
+
+        function sonMesajGuncelle(icerik) {
+            const alan = document.getElementById('sohbet-mesajlar')
+            const mesajlar = alan.querySelectorAll('.mesaj.ai')
+            const son = mesajlar[mesajlar.length - 1]
+            if (son) son.querySelector('.mesaj-balon').textContent = icerik
+            alan.scrollTop = alan.scrollHeight
+        }
+
+        function sohbetTemizle() {
+            document.getElementById('sohbet-mesajlar').innerHTML = `
+    <div class="mesaj ai">
+      <div class="mesaj-avatar">🤖</div>
+      <div class="mesaj-balon">Yeni sohbet başladı! Ne yapmamı istersin?</div>
+    </div>`
+            document.getElementById('dashboard-alani').innerHTML = ''
+        }
+
+        function enterGonder(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); soruGonder() }
+        }
+
+        async function durumKontrol() {
+            try {
+                await fetch(`${API}/health`)
+                document.getElementById('dot-backend').classList.remove('pasif')
+                document.getElementById('durum-zaman').textContent = new Date().toLocaleTimeString('tr-TR')
+            } catch { document.getElementById('dot-backend').classList.add('pasif') }
+            try {
+                const res = await fetch(`${API}/api/ai/durum`)
+                const data = await res.json()
+                if (data.durum === 'aktif') document.getElementById('dot-ollama').classList.remove('pasif')
+                else document.getElementById('dot-ollama').classList.add('pasif')
+            } catch { document.getElementById('dot-ollama').classList.add('pasif') }
+            document.getElementById('dot-db').classList.remove('pasif')
+        }
+
+        durumKontrol()
+        setInterval(durumKontrol, 10000)
+    </script>
+</body>
+
+</html>
