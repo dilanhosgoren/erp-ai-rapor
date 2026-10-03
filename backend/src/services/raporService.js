@@ -1,7 +1,7 @@
 const db = require('./dbService')
 const ollama = require('./ollamaService')
 
-// 100 sabit rapor tanımları
+// Sabit rapor tanımları
 const SABIT_RAPORLAR = {
     // Satış raporları (1-20)
     'R001': { ad: 'Aylık Satış Özeti', kategori: 'Satış', fn: () => db.aylikSatisOzeti() },
@@ -21,7 +21,7 @@ const SABIT_RAPORLAR = {
     'R062': { ad: 'Departman Maaş Özeti', kategori: 'Personel', fn: () => db.departmanMaasOzeti() }
 }
 
-// 50 ERP fonksiyonu tanımları
+// ERP fonksiyonu tanımları
 const ERP_FONKSIYONLARI = {
     'F001': { ad: 'Satış Analizi', kategori: 'Analiz', raporAdi: 'satis-listesi' },
     'F002': { ad: 'Stok Kontrolü', kategori: 'Stok', raporAdi: 'stok-durumu' },
